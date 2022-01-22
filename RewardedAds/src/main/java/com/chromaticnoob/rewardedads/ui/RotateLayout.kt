@@ -17,7 +17,15 @@ class RotateLayout @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs) {
-    private var angle: Int
+    var angle: Int = 0
+        set(angleNew) {
+        if (angleNew != angle) {
+            field = angle
+            angleChanged = true
+            requestLayout()
+            invalidate()
+        }
+    }
     private val rotateMatrix = Matrix()
     private val viewRectRotated = Rect()
     private val tempRectF1 = RectF()
@@ -25,25 +33,6 @@ class RotateLayout @JvmOverloads constructor(
     private val viewTouchPoint = FloatArray(2)
     private val childTouchPoint = FloatArray(2)
     private var angleChanged = true
-
-    /**
-     * Returns current angle of this layout
-     */
-    fun getAngle(): Int {
-        return angle
-    }
-
-    /**
-     * Sets current angle of this layout.
-     */
-    fun setAngle(angle: Int) {
-        if (this.angle != angle) {
-            this.angle = angle
-            angleChanged = true
-            requestLayout()
-            invalidate()
-        }
-    }
 
     /**
      * Returns this layout's child or null if there is no any
