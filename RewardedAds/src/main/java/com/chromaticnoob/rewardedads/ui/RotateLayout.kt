@@ -1,182 +1,156 @@
-package com.chromaticnoob.rewardedads.ui;
+package com.chromaticnoob.rewardedads.ui
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.Rect
+import android.graphics.RectF
+import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewParent
+import com.chromaticnoob.rewardedads.R
 
-import static android.view.View.MeasureSpec.UNSPECIFIED;
-import static java.lang.Math.PI;
-import static java.lang.Math.abs;
-import static java.lang.Math.ceil;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
+class RotateLayout @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : ViewGroup(context, attrs) {
+    private var angle: Int
+    private val rotateMatrix = Matrix()
+    private val viewRectRotated = Rect()
+    private val tempRectF1 = RectF()
+    private val tempRectF2 = RectF()
+    private val viewTouchPoint = FloatArray(2)
+    private val childTouchPoint = FloatArray(2)
+    private var angleChanged = true
 
-import com.chromaticnoob.rewardedads.R;
-
-public class RotateLayout extends ViewGroup {
-
-  private int angle;
-
-  private final Matrix rotateMatrix = new Matrix();
-
-  private final Rect viewRectRotated = new Rect();
-
-  private final RectF tempRectF1 = new RectF();
-  private final RectF tempRectF2 = new RectF();
-
-  private final float[] viewTouchPoint = new float[2];
-  private final float[] childTouchPoint = new float[2];
-
-  private boolean angleChanged = true;
-
-  public RotateLayout(Context context) {
-    this(context, null);
-  }
-
-  public RotateLayout(Context context, AttributeSet attrs) {
-    this(context, attrs, 0);
-  }
-
-  public RotateLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-    super(context, attrs);
-
-    final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RotateLayout);
-    angle = a.getInt(R.styleable.RotateLayout_angle, 0);
-    a.recycle();
-
-    setWillNotDraw(false);
-  }
-
-  /**
-   * Returns current angle of this layout
-   */
-  public int getAngle() {
-    return angle;
-  }
-
-  /**
-   * Sets current angle of this layout.
-   */
-  public void setAngle(int angle) {
-    if (this.angle != angle) {
-      this.angle = angle;
-      angleChanged = true;
-      requestLayout();
-      invalidate();
-    }
-  }
-
-  /**
-   * Returns this layout's child or null if there is no any
-   */
-  public View getView() {
-    if (getChildCount() > 0) {
-      return getChildAt(0);
-    } else {
-      return null;
-    }
-  }
-
-  @Override
-  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    final View child = getView();
-    if (child != null) {
-      if (abs(angle % 180) == 90) {
-        //noinspection SuspiciousNameCombination
-        measureChild(child, heightMeasureSpec, widthMeasureSpec);
-        setMeasuredDimension(
-          resolveSize(child.getMeasuredHeight(), widthMeasureSpec),
-          resolveSize(child.getMeasuredWidth(), heightMeasureSpec));
-      } else if (abs(angle % 180) == 0) {
-        measureChild(child, widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(
-          resolveSize(child.getMeasuredWidth(), widthMeasureSpec),
-          resolveSize(child.getMeasuredHeight(), heightMeasureSpec));
-      } else {
-        int childWithMeasureSpec = MeasureSpec.makeMeasureSpec(0, UNSPECIFIED);
-        int childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(0, UNSPECIFIED);
-        measureChild(child, childWithMeasureSpec, childHeightMeasureSpec);
-
-        int measuredWidth = (int) ceil(child.getMeasuredWidth() * abs(cos(angle_c())) + child.getMeasuredHeight() * abs(sin(angle_c())));
-        int measuredHeight = (int) ceil(child.getMeasuredWidth() * abs(sin(angle_c())) + child.getMeasuredHeight() * abs(cos(angle_c())));
-
-        setMeasuredDimension(
-          resolveSize(measuredWidth, widthMeasureSpec),
-          resolveSize(measuredHeight, heightMeasureSpec));
-      }
-    } else {
-      super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-  }
-
-  @Override
-  protected void onLayout(boolean changed, int l, int t, int r, int b) {
-    int layoutWidth = r - l;
-    int layoutHeight = b - t;
-
-    if (angleChanged || changed) {
-      final RectF layoutRect = tempRectF1;
-      layoutRect.set(0, 0, layoutWidth, layoutHeight);
-      final RectF layoutRectRotated = tempRectF2;
-      rotateMatrix.setRotate(angle, layoutRect.centerX(), layoutRect.centerY());
-      rotateMatrix.mapRect(layoutRectRotated, layoutRect);
-      layoutRectRotated.round(viewRectRotated);
-      angleChanged = false;
+    /**
+     * Returns current angle of this layout
+     */
+    fun getAngle(): Int {
+        return angle
     }
 
-    final View child = getView();
-    if (child != null) {
-      int childLeft = (layoutWidth - child.getMeasuredWidth()) / 2;
-      int childTop = (layoutHeight - child.getMeasuredHeight()) / 2;
-      int childRight = childLeft + child.getMeasuredWidth();
-      int childBottom = childTop + child.getMeasuredHeight();
-      child.layout(childLeft, childTop, childRight, childBottom);
+    /**
+     * Sets current angle of this layout.
+     */
+    fun setAngle(angle: Int) {
+        if (this.angle != angle) {
+            this.angle = angle
+            angleChanged = true
+            requestLayout()
+            invalidate()
+        }
     }
-  }
 
-  @Override
-  protected void dispatchDraw(Canvas canvas) {
-    canvas.save();
-    canvas.rotate(-angle, getWidth() / 2f, getHeight() / 2f);
-    super.dispatchDraw(canvas);
-    canvas.restore();
-  }
+    /**
+     * Returns this layout's child or null if there is no any
+     */
+    val view: View?
+        get() = if (childCount > 0) {
+            getChildAt(0)
+        } else {
+            null
+        }
 
-  @Override
-  public ViewParent invalidateChildInParent(int[] location, Rect dirty) {
-    invalidate();
-    return super.invalidateChildInParent(location, dirty);
-  }
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val child = view
+        if (child != null) {
+            if (Math.abs(angle % 180) == 90) {
+                measureChild(child, heightMeasureSpec, widthMeasureSpec)
+                setMeasuredDimension(
+                    resolveSize(child.measuredHeight, widthMeasureSpec),
+                    resolveSize(child.measuredWidth, heightMeasureSpec)
+                )
+            } else if (Math.abs(angle % 180) == 0) {
+                measureChild(child, widthMeasureSpec, heightMeasureSpec)
+                setMeasuredDimension(
+                    resolveSize(child.measuredWidth, widthMeasureSpec),
+                    resolveSize(child.measuredHeight, heightMeasureSpec)
+                )
+            } else {
+                val childWithMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+                val childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+                measureChild(child, childWithMeasureSpec, childHeightMeasureSpec)
+                val measuredWidth = Math.ceil(
+                    child.measuredWidth * Math.abs(Math.cos(angle_c())) + child.measuredHeight * Math.abs(
+                        Math.sin(angle_c())
+                    )
+                ).toInt()
+                val measuredHeight = Math.ceil(
+                    child.measuredWidth * Math.abs(Math.sin(angle_c())) + child.measuredHeight * Math.abs(
+                        Math.cos(angle_c())
+                    )
+                ).toInt()
+                setMeasuredDimension(
+                    resolveSize(measuredWidth, widthMeasureSpec),
+                    resolveSize(measuredHeight, heightMeasureSpec)
+                )
+            }
+        } else {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        }
+    }
 
-  @Override
-  public boolean dispatchTouchEvent(MotionEvent event) {
-    viewTouchPoint[0] = event.getX();
-    viewTouchPoint[1] = event.getY();
+    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        val layoutWidth = r - l
+        val layoutHeight = b - t
+        if (angleChanged || changed) {
+            val layoutRect = tempRectF1
+            layoutRect[0f, 0f, layoutWidth.toFloat()] = layoutHeight.toFloat()
+            val layoutRectRotated = tempRectF2
+            rotateMatrix.setRotate(angle.toFloat(), layoutRect.centerX(), layoutRect.centerY())
+            rotateMatrix.mapRect(layoutRectRotated, layoutRect)
+            layoutRectRotated.round(viewRectRotated)
+            angleChanged = false
+        }
+        val child = view
+        if (child != null) {
+            val childLeft = (layoutWidth - child.measuredWidth) / 2
+            val childTop = (layoutHeight - child.measuredHeight) / 2
+            val childRight = childLeft + child.measuredWidth
+            val childBottom = childTop + child.measuredHeight
+            child.layout(childLeft, childTop, childRight, childBottom)
+        }
+    }
 
-    rotateMatrix.mapPoints(childTouchPoint, viewTouchPoint);
+    override fun dispatchDraw(canvas: Canvas) {
+        canvas.save()
+        canvas.rotate(-angle.toFloat(), width / 2f, height / 2f)
+        super.dispatchDraw(canvas)
+        canvas.restore()
+    }
 
-    event.setLocation(childTouchPoint[0], childTouchPoint[1]);
-    boolean result = super.dispatchTouchEvent(event);
-    event.setLocation(viewTouchPoint[0], viewTouchPoint[1]);
+    override fun invalidateChildInParent(location: IntArray, dirty: Rect): ViewParent {
+        invalidate()
+        return super.invalidateChildInParent(location, dirty)
+    }
 
-    return result;
-  }
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        viewTouchPoint[0] = event.x
+        viewTouchPoint[1] = event.y
+        rotateMatrix.mapPoints(childTouchPoint, viewTouchPoint)
+        event.setLocation(childTouchPoint[0], childTouchPoint[1])
+        val result = super.dispatchTouchEvent(event)
+        event.setLocation(viewTouchPoint[0], viewTouchPoint[1])
+        return result
+    }
 
-  /**
-   * Circle angle, from 0 to TAU
-   */
-  private Double angle_c() {
-    // True circle constant, not that petty imposter known as "PI"
-    double TAU = 2 * PI;
-    return TAU * angle / 360;
-  }
+    /**
+     * Circle angle, from 0 to TAU
+     */
+    private fun angle_c(): Double {
+        // True circle constant, not that petty imposter known as "PI"
+        val TAU = 2 * Math.PI
+        return TAU * angle / 360
+    }
 
+    init {
+        val a = context.obtainStyledAttributes(attrs, R.styleable.RotateLayout)
+        angle = a.getInt(R.styleable.RotateLayout_angle, 0)
+        a.recycle()
+        setWillNotDraw(false)
+    }
 }
