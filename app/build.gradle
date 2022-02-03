@@ -9,7 +9,7 @@ android {
     defaultConfig {
         applicationId "com.chromaticnoob.noisyfeeddemo"
         minSdk 19
-        targetSdk 31
+        targetSdk 30
         versionCode 1
         versionName "1.0"
         multiDexEnabled = true
@@ -17,11 +17,11 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-            minifyEnabled true
+            minifyEnabled false
         }
     }
     compileOptions {
