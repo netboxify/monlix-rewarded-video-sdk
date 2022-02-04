@@ -1,14 +1,14 @@
-package com.netboxify.noisyfeeddemo
+package com.netboxify.demo
 
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.netboxify.noisyfeeddemo.databinding.ActivityMainBinding
 import com.netboxify.monlix_rewardedvideos_sdk.AdConstants
 import com.netboxify.monlix_rewardedvideos_sdk.RewardedAdsBuilder
 import com.netboxify.monlix_rewardedvideos_sdk.RewardedAdsCallback
 import com.google.android.material.snackbar.Snackbar
+import com.netboxify.demo.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 

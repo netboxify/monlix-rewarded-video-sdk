@@ -7,7 +7,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.chromaticnoob.noisyfeeddemo"
+        applicationId "com.netboxify.demo"
         minSdk 19
         targetSdk 30
         versionCode 1
