@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "NoisyFeedDemo"
+rootProject.name = "Monlix-RewardedVideos-SDK-Demo"
 include ':app'
 include ':Monlix-RewardedVideos-SDK'
