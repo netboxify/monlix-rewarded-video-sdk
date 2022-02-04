@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "NoisyFeedDemo"
 include ':app'
-include ':RewardedAds'
+include ':Monlix-RewardedVideos-SDK'
