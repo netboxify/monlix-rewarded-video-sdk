@@ -46,7 +46,7 @@ The usage is simple. The SDK library can be triggered through a builder pattern.
   //However, you can skip this part if you wanna use the default configuration. This configuration is totally optional.
 ```
 
-#### Finally, if you wanna get the ad from the network and display, you use this :
+#### After that, build the ad by giving the builder an activity, a fragment container, and IDs for the network (Mandatory)
 ```kotlin
   adBuilder.build(
     hostActivity = this, //Activity that hosts the ad
@@ -59,8 +59,17 @@ The usage is simple. The SDK library can be triggered through a builder pattern.
  ```
  
  As you can see, you need an ```Activity``` which will host the ad (the ad is basically a fragment), and you need a ```fragment container``` which exists within the activity.
- You can pass a null configuration in the third parameter. And that's it, after calling the above code, the ad is fetched from the server, and will display a valid ad if found.
+ You can pass a null configuration in the third parameter. And that's it, after calling the above code, the ad's information are ready to be used to load the ad.
  
+ 
+#### Finally, load the ad 
+Now, just load the ad by calling ```loadAd()``` on the builder. Voilà, your Rewarded Ad will begin loading and be visible right away.
+
+```kotlin
+  adBuilder.build(...)
+            .loadAd()
+```
+
 ### Controlling the ad even more through callbacks
 
 If you want to listen to ad callbacks such as 'adLoaded, adClosed, adFailed, adStarted' etc... You need to get the ```fragment``` that is displaying the ad.
