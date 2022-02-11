@@ -70,6 +70,8 @@ Now, just load the ad by calling ```loadAd()``` on the builder. Voilà, your Rew
             .loadAd()
 ```
 
+You don't have to create a builder everytime you wanna load an ad. If you want to load an Ad multiple times, just create one builder instance in your activity class or fragment class, then call 'loadAd()' on it to load the ad from the network and render it visible.
+
 ### Controlling the ad even more through callbacks
 
 If you want to listen to ad callbacks such as 'adLoaded, adClosed, adFailed, adStarted' etc... You need to get the ```fragment``` that is displaying the ad.
