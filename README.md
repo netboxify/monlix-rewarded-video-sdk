@@ -40,8 +40,8 @@ The usage is simple. The SDK library can be triggered through a builder pattern.
 
 ```kotlin
   val adConfiguration = adBuilder.configure() //same as RewardedAdsConfiguration()
-  //or you can this lane, they return the same thing/object.
-  val adConfiguration = RewardedAdsConfiguration() 
+  //or
+  val adConfiguration = RewardedAdsConfiguration() //same as adBuilder.configure(), returns the same class instance
   
   //However, you can skip this part if you wanna use the default configuration. This configuration is totally optional.
 ```
